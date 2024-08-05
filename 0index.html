@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>学年選択と問題解答</title>
+    <style>
+        #questionSection {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>学年選択と問題解答</h1>
+    <p>自分の学年を選んでください。</p>
+    <select id="gradeSelect">
+        <option value="1">小学校1年生</option>
+        <option value="2">小学校2年生</option>
+        <option value="3">小学校3年生</option>
+        <option value="4">小学校4年生</option>
+        <option value="5">小学校5年生</option>
+        <option value="6">小学校6年生</option>
+        <option value="7">中学校1年生</option>
+        <option value="8">中学校2年生</option>
+        <option value="9">中学校3年生</option>
+        <option value="10">高校1年生</option>
+        <option value="11">高校2年生</option>
+        <option value="12">高校3年生</option>
+    </select>
+    <button onclick="selectGrade()">選択</button>
+
+    <div id="subjectSection" style="display:none;">
+        <h2>教科書選択</h2>
+        <div id="japaneseSection">
+            <h3>国語</h3>
+            <select id="japaneseTextbook">
+                <option value="光村図書">光村図書</option>
+                <option value="教育出版">教育出版</option>
+                <option value="東京書籍">東京書籍</option>
+                <option value="学校図書">学校図書</option>
+                <option value="三省堂">三省堂</option>
+            </select>
+        </div>
+
+        <div id="mathSection">
+            <h3 id="mathTitle">算数 / 数学</h3>
+            <select id="mathTextbook">
+                <!-- 教科書のオプションはJavaScriptで追加されます -->
+            </select>
+        </div>
+        <button onclick="startQuiz()">問題を表示</button>
+    </div>
+
+    <div id="questionSection">
+        <h2>問題</h2>
+        <p id="questionText"></p>
+        <input type="text" id="answerInput" placeholder="答えを入力してください">
+        <button onclick="checkAnswer()">回答を送信</button>
+        <p id="result"></p>
+    </div>
+
+    <script>
+        var questions = {
+            "1": [
+                {question: "1 + 1 は？", answer: "2"},
+                {question: "3 - 1 は？", answer: "2"}
+            ],
+            "2": [
+                {question: "2 + 2 は？", answer: "4"},
+                {question: "5 - 3 は？", answer: "2"}
+            ],
+            "3": [
+                {question: "5 + 3 は？", answer: "8"},
+                {question: "10 - 7 は？", answer: "3"}
+            ],
+            "4": [
+                {question: "12 ÷ 3 は？", answer: "4"},
+                {question: "9 + 6 は？", answer: "15"}
+            ],
+            "5": [
+                {question: "15 - 5 は？", answer: "10"},
+                {question: "6 × 7 は？", answer: "42"}
+            ],
+            "6": [
+                {question: "2 × 9 は？", answer: "18"},
+                {question: "3 × 7 は？", answer: "21"}
+            ],
+            "7": [
+                {question: "12 ÷ 4 は？", answer: "3"},
+                {question: "3 × 5 は？", answer: "15"}
+            ],
+            "8": [
+                {question: "(-3) + 5 は？", answer: "2"},
+                {question: "6 × (-2) は？", answer: "-12"}
+            ],
+            "9": [
+                {question: "x + 3 = 7 のとき、x は？", answer: "4"},
+                {question: "5x = 15 のとき、x は？", answer: "3"}
+            ],
+            "10": [
+                {question: "2x + 3 = 7 のとき、x は？", answer: "2"},
+                {question: "3x - 4 = 8 のとき、x は？", answer: "4"}
+            ],
+            "11": [
+                {question: "√9 は？", answer: "3"},
+                {question: "x^2 - 4 = 0 のとき、x は？", answer: "2"}
+            ],
+            "12": [
+                {question: "sin(30°) は？", answer: "0.5"},
+                {question: "cos(60°) は？", answer: "0.5"}
+            ]
+        };
+
+        var selectedGrade;
+        var currentQuestionIndex = 0;
+        var currentQuestions = [];
+
+        function selectGrade() {
+            selectedGrade = document.getElementById("gradeSelect").value;
+            var subjectSection = document.getElementById("subjectSection");
+            var mathTitle = document.getElementById("mathTitle");
+            var mathTextbook = document.getElementById("mathTextbook");
+
+            // 教科書選択セクションを表示
+            subjectSection.style.display = "block";
+
+            // 教科書のオプションをクリア
+            mathTextbook.innerHTML = '';
+
+            if (selectedGrade <= 6) {
+                // 小学校：算数
+                mathTitle.innerText = "算数";
+                var textbooks = ["東京書籍", "学校図書", "啓林館", "日本文教出版", "教育出版", "大日本図書"];
+            } else {
+                // 中学校および高校：数学
+                mathTitle.innerText = "数学";
+                var textbooks = ["東京書籍", "学校図書", "啓林館", "日本文教出版", "教育出版", "大日本図書"];
+            }
+
+            // 教科書のオプションを追加
+            textbooks.forEach(function(textbook) {
+                var option = document.createElement("option");
+                option.value = textbook;
+                option.text = textbook;
+                mathTextbook.add(option);
+            });
+        }
+
+        function startQuiz() {
+            currentQuestions = questions[selectedGrade] || [];
+            currentQuestionIndex = 0;
+            if (currentQuestions.length > 0) {
+                document.getElementById("subjectSection").style.display = "none";
+                document.getElementById("questionSection").style.display = "block";
+                showQuestion();
+            }
+        }
+
+        function showQuestion() {
+            if (currentQuestionIndex < currentQuestions.length) {
+                var question = currentQuestions[currentQuestionIndex];
+                document.getElementById("questionText").innerText = question.question;
+                document.getElementById("answerInput").value = '';
+                document.getElementById("result").innerText = '';
+            } else {
+                document.getElementById("questionText").innerText = "全ての問題が終了しました！";
+                document.getElementById("answerInput").style.display = "none";
+                document.getElementById("result").style.display = "none";
+            }
+        }
+
+        function checkAnswer() {
+            var answer = document.getElementById("answerInput").value;
+            var question = currentQuestions[currentQuestionIndex];
+            if (answer === question.answer) {
+                document.getElementById("result").innerText = "正解です！";
+            } else {
+                document.getElementById("result").innerText = "不正解です。正しい答えは " + question.answer + " です。";
+            }
+            currentQuestionIndex++;
+            setTimeout(showQuestion, 2000);
+        }
+    </script>
+</body>
+</html>
