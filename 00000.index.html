@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>苦手問題</title>
+    <style>
+        #questionSection {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>苦手問題</h1>
+    <div id="questionSection">
+        <h2>問題</h2>
+        <p id="questionText"></p>
+        <input type="text" id="answerInput" placeholder="答えを入力してください">
+        <button onclick="checkAnswer()">回答を送信</button>
+        <p id="result"></p>
+        <p id="summary"></p>
+    </div>
+    <p id="noQuestions"></p>
+
+    <script>
+        var incorrectQuestions = JSON.parse(localStorage.getItem('incorrectQuestions') || '[]');
+        var currentQuestionIndex = 0;
+        var correctCount = 0;
+
+        function startQuiz() {
+            if (incorrectQuestions.length > 0) {
+                document.getElementById("questionSection").style.display = "block";
+                showQuestion();
+            } else {
+                document.getElementById("noQuestions").innerText = "苦手な問題がありません。";
+            }
+        }
+
+        function showQuestion() {
+            if (currentQuestionIndex < incorrectQuestions.length) {
+                var question = incorrectQuestions[currentQuestionIndex];
+                document.getElementById("questionText").innerText = question.question;
+                document.getElementById("answerInput").value = '';
+                document.getElementById("result").innerText = '';
+            } else {
+                showSummary();
+            }
+        }
+
+        function checkAnswer() {
+            var answer = document.getElementById("answerInput").value;
+            var question = incorrectQuestions[currentQuestionIndex];
+            if (answer === question.answer) {
+                document.getElementById("result").innerText = "正解です！";
+                correctCount++;
+            } else {
+                document.getElementById("result").innerText = "不正解です。正しい答えは " + question.answer + " です。";
+            }
+            currentQuestionIndex++;
+            setTimeout(showQuestion, 2000);
+        }
+
+        function showSummary() {
+            document.getElementById("summary").innerHTML = "お疲れ様でした。正解数: " + correctCount + " / " + incorrectQuestions.length;
+        }
+
+        startQuiz();
+    </script>
+</body>
+</html>
