@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>学年選択と問題解答</title>
+    <title>問題</title>
     <style>
         #questionSection {
             display: none;
@@ -12,7 +12,6 @@
 </head>
 <body>
     <h1>学年選択と問題解答</h1>
-<a href="/00000index.html">苦手問題</a>
     <p>自分の学年を選んでください。</p>
     <select id="gradeSelect">
         <option value="1">小学校1年生</option>
@@ -51,7 +50,7 @@
         </div>
         <button onclick="startQuiz()">問題を表示</button>
     </div>
-
+<h1>数字は半角、漢字はひらがなか、漢字の全角で、かぎかっこ(「」)入れないで答えてね。</h1>
     <div id="questionSection">
         <h2>問題</h2>
         <p id="questionText"></p>
@@ -62,32 +61,108 @@
     </div>
 
     <script>
+        // 学年ごとの問題データ
         var questions = {
             "1": [
-                {question: "1 + 1 は？", answer: "2"},
-                {question: "3 - 1 は？", answer: "2"},
-                {question: "2 + 3 は？", answer: "5"},
-                {question: "4 - 2 は？", answer: "2"},
-                {question: "1 + 2 は？", answer: "3"},
-                // ...さらに15問追加
+                { question: "『日』の読み方は？", answer: "にち" },
+                { question: "2 + 3 は？", answer: "5" },
+                { question: "「いち」を漢字で書くと？", answer: "一" },
+                { question: "10 - 7 は？", answer: "3" },
+                { question: "「月」の訓読みは？", answer: "つき" },
+                { question: "『二』の読み方は？", answer: "に" },
+                { question: "2 + 7 は？", answer: "9" },
+                { question: "5 + 3 は？", answer: "8" },
+                { question: "1 + 4 は？", answer: "5" },
+                { question: "6 + 3 は？", answer: "9" },
+                { question: "10 - 5 は？", answer: "5" },
+                { question: "9 - 8 は？", answer: "1" },
+                { question: "「百」の読み方は？", answer: "ひゃく" },
+                { question: "6 - 2 は？", answer: "4" },
+                { question: "7 - 4 は？", answer: "3" },
+                // ...漢字と計算の他の問題を追加
             ],
             "2": [
-                {question: "2 + 2 は？", answer: "4"},
-                {question: "5 - 3 は？", answer: "2"},
-                {question: "3 + 4 は？", answer: "7"},
-                {question: "7 - 2 は？", answer: "5"},
-                {question: "6 + 3 は？", answer: "9"},
-                // ...さらに15問追加
+                { question: "「しょうがっこう」を漢字で書くと？", answer: "小学校" },
+                { question: "6 + 4 は？", answer: "10" },
+                { question: "「大」の反対の言葉は？", answer: "小" },
+                { question: "5 × 2 は？", answer: "10" },
+                { question: "「耳」の音読みは？", answer: "じ" },
+                // ...他の問題を追加
             ],
             "3": [
-                {question: "5 + 3 は？", answer: "8"},
-                {question: "10 - 7 は？", answer: "3"},
-                {question: "4 + 6 は？", answer: "10"},
-                {question: "8 - 3 は？", answer: "5"},
-                {question: "7 + 2 は？", answer: "9"},
-                // ...さらに15問追加
+                { question: "「しょうがっこう」を漢字で書くと？", answer: "小学校" },
+                { question: "6 + 4 は？", answer: "10" },
+                { question: "「大」の反対の言葉は？", answer: "小" },
+                { question: "5 × 2 は？", answer: "10" },
+                { question: "「耳」の音読みは？", answer: "じ" },
+                // ...他の問題を追加
             ],
-            // 他の学年の問題も追加
+            "4": [
+                { question: "「しょうがっこう」を漢字で書くと？", answer: "小学校" },
+                { question: "6 + 4 は？", answer: "10" },
+                { question: "「大」の反対の言葉は？", answer: "小" },
+                { question: "5 × 2 は？", answer: "10" },
+                { question: "「耳」の音読みは？", answer: "じ" },
+                // ...他の問題を追加
+            ],
+            "5": [
+                { question: "「しょうがっこう」を漢字で書くと？", answer: "小学校" },
+                { question: "6 + 4 は？", answer: "10" },
+                { question: "「大」の反対の言葉は？", answer: "小" },
+                { question: "5 × 2 は？", answer: "10" },
+                { question: "「耳」の音読みは？", answer: "じ" },
+                // ...他の問題を追加
+            ],
+            "6": [
+                { question: "「しょうがっこう」を漢字で書くと？", answer: "小学校" },
+                { question: "6 + 4 は？", answer: "10" },
+                { question: "「大」の反対の言葉は？", answer: "小" },
+                { question: "5 × 2 は？", answer: "10" },
+                { question: "「耳」の音読みは？", answer: "じ" },
+                // ...他の問題を追加
+            ],
+            "7": [
+                { question: "「しょうがっこう」を漢字で書くと？", answer: "小学校" },
+                { question: "6 + 4 は？", answer: "10" },
+                { question: "「大」の反対の言葉は？", answer: "小" },
+                { question: "5 × 2 は？", answer: "10" },
+                { question: "「耳」の音読みは？", answer: "じ" },
+                // ...他の問題を追加
+            ],
+            "2": [
+                { question: "「しょうがっこう」を漢字で書くと？", answer: "小学校" },
+                { question: "6 + 4 は？", answer: "10" },
+                { question: "「大」の反対の言葉は？", answer: "小" },
+                { question: "5 × 2 は？", answer: "10" },
+                { question: "「耳」の音読みは？", answer: "じ" },
+                // ...他の問題を追加
+            ],
+            "2": [
+                { question: "「しょうがっこう」を漢字で書くと？", answer: "小学校" },
+                { question: "6 + 4 は？", answer: "10" },
+                { question: "「大」の反対の言葉は？", answer: "小" },
+                { question: "5 × 2 は？", answer: "10" },
+                { question: "「耳」の音読みは？", answer: "じ" },
+                // ...他の問題を追加
+            ],
+
+            "2": [
+                { question: "「しょうがっこう」を漢字で書くと？", answer: "小学校" },
+                { question: "6 + 4 は？", answer: "10" },
+                { question: "「大」の反対の言葉は？", answer: "小" },
+                { question: "5 × 2 は？", answer: "10" },
+                { question: "「耳」の音読みは？", answer: "じ" },
+                // ...他の問題を追加
+            ],
+            "2": [
+                { question: "「しょうがっこう」を漢字で書くと？", answer: "小学校" },
+                { question: "6 + 4 は？", answer: "10" },
+                { question: "「大」の反対の言葉は？", answer: "小" },
+                { question: "5 × 2 は？", answer: "10" },
+                { question: "「耳」の音読みは？", answer: "じ" },
+                // ...他の問題を追加
+            ],
+            // 他の学年の問題を追加
         };
 
         var selectedGrade;
