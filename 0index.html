@@ -1,266 +1,88 @@
 <!DOCTYPE html>
+<h1>数字は半角、漢字はひらがなか、漢字の全角で、かぎかっこ(「」)入れないで答えてね。</h1>
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>問題</title>
-    <style>
-        #questionSection {
-            display: none;
-        }
-    </style>
+    <script src="kanji.js"></script>
+    <script src="keisan.js"></script>
 </head>
 <body>
-    <h1>学年選択と問題解答</h1>
-    <p>自分の学年を選んでください。</p>
-    <select id="gradeSelect">
-        <option value="1">小学校1年生</option>
-        <option value="2">小学校2年生</option>
-        <option value="3">小学校3年生</option>
-        <option value="4">小学校4年生</option>
-        <option value="5">小学校5年生</option>
-        <option value="6">小学校6年生</option>
-        <option value="7">中学校1年生</option>
-        <option value="8">中学校2年生</option>
-        <option value="9">中学校3年生</option>
-        <option value="10">高校1年生</option>
-        <option value="11">高校2年生</option>
-        <option value="12">高校3年生</option>
-    </select>
-    <button onclick="selectGrade()">選択</button>
-
-    <div id="subjectSection" style="display:none;">
-        <h2>教科書選択</h2>
-        <div id="japaneseSection">
-            <h3>国語</h3>
-            <select id="japaneseTextbook">
-                <option value="光村図書">光村図書</option>
-                <option value="教育出版">教育出版</option>
-                <option value="東京書籍">東京書籍</option>
-                <option value="学校図書">学校図書</option>
-                <option value="三省堂">三省堂</option>
-            </select>
-        </div>
-
-        <div id="mathSection">
-            <h3 id="mathTitle">算数 / 数学</h3>
-            <select id="mathTextbook">
-                <!-- 教科書のオプションはJavaScriptで追加されます -->
-            </select>
-        </div>
-        <button onclick="startQuiz()">問題を表示</button>
+    <h1>問題</h1>
+    <div id="question-container">
+        <!-- 問題がここに表示される -->
     </div>
-<h1>数字は半角、漢字はひらがなか、漢字の全角で、かぎかっこ(「」)入れないで答えてね。</h1>
-    <div id="questionSection">
-        <h2>問題</h2>
-        <p id="questionText"></p>
-        <input type="text" id="answerInput" placeholder="答えを入力してください">
-        <button onclick="checkAnswer()">回答を送信</button>
-        <p id="result"></p>
-        <p id="summary"></p>
-    </div>
-
+    <input type="text" id="answer-input" placeholder="回答を入力">
+    <button id="submit-answer">回答する</button>
+    <p id="result"></p>
     <script>
-        // 学年ごとの問題データ
-        var questions = {
-            "1": [
-                { question: "『日』の読み方は？", answer: "にち" },
-                { question: "2 + 3 は？", answer: "5" },
-                { question: "「いち」を漢字で書くと？", answer: "一" },
-                { question: "10 - 7 は？", answer: "3" },
-                { question: "「月」の訓読みは？", answer: "つき" },
-                { question: "『二』の読み方は？", answer: "に" },
-                { question: "2 + 7 は？", answer: "9" },
-                { question: "5 + 3 は？", answer: "8" },
-                { question: "1 + 4 は？", answer: "5" },
-                { question: "6 + 3 は？", answer: "9" },
-                { question: "10 - 5 は？", answer: "5" },
-                { question: "9 - 8 は？", answer: "1" },
-                { question: "「百」の読み方は？", answer: "ひゃく" },
-                { question: "6 - 2 は？", answer: "4" },
-                { question: "7 - 4 は？", answer: "3" },
-                // ...漢字と計算の他の問題を追加
-            ],
-            "2": [
-                { question: "「しょうがっこう」を漢字で書くと？", answer: "小学校" },
-                { question: "6 + 4 は？", answer: "10" },
-                { question: "「大」の反対の言葉は？", answer: "小" },
-                { question: "5 × 2 は？", answer: "10" },
-                { question: "「耳」の音読みは？", answer: "じ" },
-                // ...他の問題を追加
-            ],
-            "3": [
-                { question: "「しょうがっこう」を漢字で書くと？", answer: "小学校" },
-                { question: "6 + 4 は？", answer: "10" },
-                { question: "「大」の反対の言葉は？", answer: "小" },
-                { question: "5 × 2 は？", answer: "10" },
-                { question: "「耳」の音読みは？", answer: "じ" },
-                // ...他の問題を追加
-            ],
-            "4": [
-                { question: "「しょうがっこう」を漢字で書くと？", answer: "小学校" },
-                { question: "6 + 4 は？", answer: "10" },
-                { question: "「大」の反対の言葉は？", answer: "小" },
-                { question: "5 × 2 は？", answer: "10" },
-                { question: "「耳」の音読みは？", answer: "じ" },
-                // ...他の問題を追加
-            ],
-            "5": [
-                { question: "「しょうがっこう」を漢字で書くと？", answer: "小学校" },
-                { question: "6 + 4 は？", answer: "10" },
-                { question: "「大」の反対の言葉は？", answer: "小" },
-                { question: "5 × 2 は？", answer: "10" },
-                { question: "「耳」の音読みは？", answer: "じ" },
-                // ...他の問題を追加
-            ],
-            "6": [
-                { question: "「しょうがっこう」を漢字で書くと？", answer: "小学校" },
-                { question: "6 + 4 は？", answer: "10" },
-                { question: "「大」の反対の言葉は？", answer: "小" },
-                { question: "5 × 2 は？", answer: "10" },
-                { question: "「耳」の音読みは？", answer: "じ" },
-                // ...他の問題を追加
-            ],
-            "7": [
-                { question: "「しょうがっこう」を漢字で書くと？", answer: "小学校" },
-                { question: "6 + 4 は？", answer: "10" },
-                { question: "「大」の反対の言葉は？", answer: "小" },
-                { question: "5 × 2 は？", answer: "10" },
-                { question: "「耳」の音読みは？", answer: "じ" },
-                // ...他の問題を追加
-            ],
-            "2": [
-                { question: "「しょうがっこう」を漢字で書くと？", answer: "小学校" },
-                { question: "6 + 4 は？", answer: "10" },
-                { question: "「大」の反対の言葉は？", answer: "小" },
-                { question: "5 × 2 は？", answer: "10" },
-                { question: "「耳」の音読みは？", answer: "じ" },
-                // ...他の問題を追加
-            ],
-            "2": [
-                { question: "「しょうがっこう」を漢字で書くと？", answer: "小学校" },
-                { question: "6 + 4 は？", answer: "10" },
-                { question: "「大」の反対の言葉は？", answer: "小" },
-                { question: "5 × 2 は？", answer: "10" },
-                { question: "「耳」の音読みは？", answer: "じ" },
-                // ...他の問題を追加
-            ],
+        let currentQuestionIndex = 0;
+        let correctAnswers = 0;
+        let questions = [];
+        let grade = 1; // ユーザーの学年（例として1年生を設定）
 
-            "2": [
-                { question: "「しょうがっこう」を漢字で書くと？", answer: "小学校" },
-                { question: "6 + 4 は？", answer: "10" },
-                { question: "「大」の反対の言葉は？", answer: "小" },
-                { question: "5 × 2 は？", answer: "10" },
-                { question: "「耳」の音読みは？", answer: "じ" },
-                // ...他の問題を追加
-            ],
-            "2": [
-                { question: "「しょうがっこう」を漢字で書くと？", answer: "小学校" },
-                { question: "6 + 4 は？", answer: "10" },
-                { question: "「大」の反対の言葉は？", answer: "小" },
-                { question: "5 × 2 は？", answer: "10" },
-                { question: "「耳」の音読みは？", answer: "じ" },
-                // ...他の問題を追加
-            ],
-            // 他の学年の問題を追加
-        };
-
-        var selectedGrade;
-        var currentQuestionIndex = 0;
-        var currentQuestions = [];
-        var incorrectQuestions = [];
-        var correctCount = 0;
-
-        function selectGrade() {
-            selectedGrade = document.getElementById("gradeSelect").value;
-            var subjectSection = document.getElementById("subjectSection");
-            var mathTitle = document.getElementById("mathTitle");
-            var mathTextbook = document.getElementById("mathTextbook");
-
-            // 教科書選択セクションを表示
-            subjectSection.style.display = "block";
-
-            // 教科書のオプションをクリア
-            mathTextbook.innerHTML = '';
-
-            if (selectedGrade <= 6) {
-                // 小学校：算数
-                mathTitle.innerText = "算数";
-                var textbooks = ["東京書籍", "学校図書", "啓林館", "日本文教出版", "教育出版", "大日本図書"];
-            } else {
-                // 中学校および高校：数学
-                mathTitle.innerText = "数学";
-                var textbooks = ["東京書籍", "学校図書", "啓林館", "日本文教出版", "教育出版", "大日本図書"];
+        function loadQuestions() {
+            for (let i = 0; i < 20; i++) {
+                let kanjiQuestion = generateKanjiQuestion(grade);
+                let mathQuestion = generateMathQuestion(grade);
+                // 漢字と計算問題を交互に混ぜる
+                questions.push(i % 2 === 0 ? kanjiQuestion : mathQuestion);
             }
-
-            // 教科書のオプションを追加
-            textbooks.forEach(function(textbook) {
-                var option = document.createElement("option");
-                option.value = textbook;
-                option.text = textbook;
-                mathTextbook.add(option);
-            });
-        }
-
-        function startQuiz() {
-            var allQuestions = questions[selectedGrade] || [];
-            currentQuestions = shuffleArray(allQuestions).slice(0, 20);
-            currentQuestionIndex = 0;
-            correctCount = 0;
-            incorrectQuestions = [];
-            document.getElementById("subjectSection").style.display = "none";
-            document.getElementById("questionSection").style.display = "block";
-            showQuestion();
         }
 
         function showQuestion() {
-            if (currentQuestionIndex < currentQuestions.length) {
-                var question = currentQuestions[currentQuestionIndex];
-                document.getElementById("questionText").innerText = question.question;
-                document.getElementById("answerInput").value = '';
-                document.getElementById("result").innerText = '';
+            if (currentQuestionIndex < questions.length) {
+                document.getElementById('question-container').innerHTML = questions[currentQuestionIndex].question;
             } else {
-                showSummary();
+                // 全ての問題が終わった時
+                if (correctAnswers >= 15) {
+                    alert("おめでとうございます！問題をクリアしました。");
+                    incrementClearCount();
+                    window.location.href = "0000index.html";
+                } else {
+                    alert("もう一度挑戦してください。");
+                    resetGame();
+                }
             }
         }
 
         function checkAnswer() {
-            var answer = document.getElementById("answerInput").value;
-            var question = currentQuestions[currentQuestionIndex];
-            if (answer === question.answer) {
-                document.getElementById("result").innerText = "正解です！";
-                correctCount++;
+            let userAnswer = document.getElementById('answer-input').value.trim();
+            if (userAnswer === questions[currentQuestionIndex].answer.toString()) {
+                correctAnswers++;
+                document.getElementById('result').innerText = "正解!";
             } else {
-                document.getElementById("result").innerText = "不正解です。正しい答えは " + question.answer + " です。";
-                incorrectQuestions.push(question);
+                document.getElementById('result').innerText = `間違い！正解は ${questions[currentQuestionIndex].answer} でした。`;
+                saveIncorrectQuestion(questions[currentQuestionIndex]);
             }
             currentQuestionIndex++;
-            setTimeout(showQuestion, 2000);
+            document.getElementById('answer-input').value = '';
+            showQuestion();
         }
 
-        function showSummary() {
-            var resultText = correctCount >= 15 ? "おめでとうございます！クリアしました！" : "残念ですが、クリアできませんでした。";
-            var incorrectText = incorrectQuestions.length > 0 ? "苦手な問題は以下です：" : "";
-            incorrectQuestions.forEach(function(question) {
-                incorrectText += `<br>${question.question} 答え: ${question.answer}`;
-            });
-            document.getElementById("summary").innerHTML = resultText + "<br>正解数: " + correctCount + "<br>" + incorrectText;
-            if (incorrectQuestions.length > 0) {
-                saveIncorrectQuestions(incorrectQuestions);
-            }
+        function saveIncorrectQuestion(question) {
+            let incorrectQuestions = JSON.parse(localStorage.getItem('incorrectQuestions')) || [];
+            incorrectQuestions.push(question);
+            localStorage.setItem('incorrectQuestions', JSON.stringify(incorrectQuestions));
         }
 
-        function saveIncorrectQuestions(questions) {
-            localStorage.setItem('incorrectQuestions', JSON.stringify(questions));
+        function incrementClearCount() {
+            let clearCount = localStorage.getItem('clearCount') || 0;
+            clearCount++;
+            localStorage.setItem('clearCount', clearCount);
         }
 
-        function shuffleArray(array) {
-            for (let i = array.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [array[i], array[j]] = [array[j], array[i]];
-            }
-            return array;
+        function resetGame() {
+            currentQuestionIndex = 0;
+            correctAnswers = 0;
+            loadQuestions();
+            showQuestion();
         }
+
+        document.getElementById('submit-answer').addEventListener('click', checkAnswer);
+        loadQuestions();
+        showQuestion();
     </script>
 </body>
 </html>
